@@ -14,7 +14,7 @@ public class Edge {
         this.weight = weight;
     }
 
-    // Getters
+
     public int getFrom() { return from; }
     public int getTo() { return to; }
     public int getWeight() { return weight; }

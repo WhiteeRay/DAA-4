@@ -26,7 +26,7 @@ public class ShortestPathResult {
     public List<Integer> reconstructPath(int target) {
         List<Integer> path = new ArrayList<>();
         if (predecessors[target] == -1 && target != source) {
-            return path; // no path exists
+            return path;
         }
 
         for (int at = target; at != -1; at = predecessors[at]) {

@@ -23,7 +23,7 @@ public class TopologicalSort {
         int n = graph.getVertices();
         int[] inDegree = new int[n];
 
-        // Calculate in-degrees
+
         for (int i = 0; i < n; i++) {
             metrics.incrementVisit();
             for (Edge edge : graph.getEdges(i)) {
@@ -32,7 +32,7 @@ public class TopologicalSort {
             }
         }
 
-        // Kahn's algorithm
+
         Queue<Integer> queue = new LinkedList<>();
         for (int i = 0; i < n; i++) {
             if (inDegree[i] == 0) {

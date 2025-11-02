@@ -56,22 +56,54 @@ public class DAGShortestPath {
     }
 
     public CriticalPathResult findCriticalPath() {
+        metrics.startTimer();
+        metrics.reset();
 
-        Graph invertedGraph = invertWeights();
-        DAGShortestPath invertedSP = new DAGShortestPath(invertedGraph);
+        int n = graph.getVertices();
+        int[] dist = new int[n];
+        int[] prev = new int[n];
 
 
-        int source = findSourceNode();
-        ShortestPathResult invertedResult = invertedSP.findShortestPaths(source);
+        Arrays.fill(dist, Integer.MIN_VALUE);
+        Arrays.fill(prev, -1);
 
 
-        int[] longestDist = new int[graph.getVertices()];
-        for (int i = 0; i < longestDist.length; i++) {
-            longestDist[i] = -invertedResult.getDistances()[i];
+        int[] inDegree = new int[n];
+        for (int i = 0; i < n; i++) {
+            for (Edge edge : graph.getEdges(i)) {
+                inDegree[edge.getTo()]++;
+            }
         }
 
-        return new CriticalPathResult(longestDist, invertedResult.getPredecessors(),
-                invertedResult.getMetrics());
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == 0) {
+                dist[i] = 0;
+            }
+        }
+
+
+        TopologicalSort topo = new TopologicalSort(graph);
+        List<Integer> order = topo.getTopologicalOrder();
+
+
+        for (int u : order) {
+            metrics.incrementVisit();
+            if (dist[u] != Integer.MIN_VALUE) {
+                for (Edge edge : graph.getEdges(u)) {
+                    metrics.incrementEdgeTraversal();
+                    metrics.incrementOperation("RELAX");
+                    int v = edge.getTo();
+                    int newDist = dist[u] + edge.getWeight();
+                    if (newDist > dist[v]) {
+                        dist[v] = newDist;
+                        prev[v] = u;
+                    }
+                }
+            }
+        }
+
+        metrics.stopTimer();
+        return new CriticalPathResult(dist, prev, metrics);
     }
 
     private Graph invertWeights() {

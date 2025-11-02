@@ -13,7 +13,7 @@ public class Graph {
         this.nodeDurations = new HashMap<>();
         for (int i = 0; i < vertices; i++) {
             adjacencyList.put(i, new ArrayList<>());
-            nodeDurations.put(i, 0); // default duration
+            nodeDurations.put(i, 0);
         }
     }
 
